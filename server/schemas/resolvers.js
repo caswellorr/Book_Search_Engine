@@ -8,7 +8,15 @@ const resolvers = {
     // ========= GET_ME =======
 
     me: async (parent, args, { user }) => {
-      return User.findById(user._id).populate("books");
+      try {
+
+        return User.findById(user._id);
+        
+      } catch (error) {
+
+        throw new AuthenticationError("You need to be logged in!");
+        
+      }
     },
   },
 
@@ -39,7 +47,7 @@ const resolvers = {
       const user = await User.create(args);
 
       if (!user) {
-        console.log("Something is wrong!");
+        throw new AuthenticationError("Please enter valid username, email, and password!");
       }
 
       const token = signToken(user);
@@ -51,7 +59,7 @@ const resolvers = {
 
     saveBook: async (parent, { user }, context) => {
 
-      console.log({ user });
+      console.log(user);
 
       try {
         const updatedUser = await User.findOneAndUpdate(
@@ -63,27 +71,26 @@ const resolvers = {
         return updatedUser;
 
       } catch (error) {
-        console.log(error);
+        throw new AuthenticationError("You need to be logged in!");
       }
     },
 
     // =========== REMOVE_BOOK =============
 
-    removeBook: async (parent, { user }, context) => {
+    removeBook: async (parent, { user }, { bookId }) => {
       try {
         const updatedUser = await User.findOneAndUpdate(
           { _id: user._id },
-          { $pull: { savedBooks: { bookId: params.bookId } } },
+          { $pull: { savedBooks: { bookId } } },
           { new: true }
         );
 
         return updatedUser;
         
       } catch (error) {
-        if (!updatedUser) {
-          console.log("Couldn't find user with this id!");
-          console.log(error);
-        }
+
+      throw new AuthenticationError("You need to be logged in!");
+      
       }
     },
   },
