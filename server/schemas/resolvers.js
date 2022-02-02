@@ -7,10 +7,12 @@ const resolvers = {
   Query: {
     // ========= GET_ME =======
 
-    me: async (parent, args, { user }) => {
+    me: async (parent, args, context) => {
       try {
 
-        return User.findById(user._id);
+        console.log(context.user);
+
+        return User.findById(context.user._id);
         
       } catch (error) {
 
@@ -57,28 +59,35 @@ const resolvers = {
 
     // =========== SAVE_BOOK =============
 
-    saveBook: async (parent, { user }, context) => {
+    saveBook: async (parent, { book }, { user }) => {
 
+      console.log('cucumber');
       console.log(user);
 
-      try {
+      if(user) {
+
         const updatedUser = await User.findOneAndUpdate(
           { _id: user._id },
-          { $addToSet: { savedBooks: context } },
+          { $addToSet: { savedBooks: book } },
           { new: true, runValidators: true }
         );
 
         return updatedUser;
 
-      } catch (error) {
+      } 
+      else {
+
         throw new AuthenticationError("You need to be logged in!");
+      
       }
     },
 
     // =========== REMOVE_BOOK =============
 
-    removeBook: async (parent, { user }, { bookId }) => {
-      try {
+    removeBook: async (parent, { bookId }, { user }) => {
+ 
+      if(user) {
+
         const updatedUser = await User.findOneAndUpdate(
           { _id: user._id },
           { $pull: { savedBooks: { bookId } } },
@@ -86,12 +95,14 @@ const resolvers = {
         );
 
         return updatedUser;
-        
-      } catch (error) {
 
-      throw new AuthenticationError("You need to be logged in!");
-      
+      } else {
+
+        throw new AuthenticationError("You need to be logged in!");
+
+
       }
+      
     },
   },
 };
