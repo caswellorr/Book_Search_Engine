@@ -10,9 +10,14 @@ const resolvers = {
     me: async (parent, args, context) => {
       try {
 
-        console.log(context.user);
+        // console.log('cucumber')
+        // console.log(context.user);
 
-        return User.findById(context.user._id);
+        const user = await User.findById(context.user._id);
+
+        console.log(user);
+
+        return user
         
       } catch (error) {
 
