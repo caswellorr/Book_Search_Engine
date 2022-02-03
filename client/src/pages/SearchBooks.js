@@ -65,8 +65,7 @@ const SearchBooks = () => {
     }
 
     try {
-      console.log('cucumber');
-      console.log(bookToSave);
+     
       saveBook({ variables: { book: bookToSave } });
 
       // if book successfully saves to user's account, save book id to state
