@@ -9,13 +9,8 @@ const resolvers = {
 
     me: async (parent, args, context) => {
       try {
-
-        // console.log('cucumber')
-        // console.log(context.user);
-
+        
         const user = await User.findById(context.user._id);
-
-        console.log(user);
 
         return user
         
@@ -65,9 +60,6 @@ const resolvers = {
     // =========== SAVE_BOOK =============
 
     saveBook: async (parent, { book }, { user }) => {
-
-      console.log('cucumber');
-      console.log(user);
 
       if(user) {
 
